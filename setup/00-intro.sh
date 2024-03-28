@@ -51,6 +51,9 @@ kubectl apply \
 # Crossplane #
 ##############
 
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
+
 helm upgrade --install crossplane crossplane \
     --repo https://charts.crossplane.io/stable \
     --namespace crossplane-system --create-namespace --wait
@@ -240,6 +243,8 @@ kubectl create namespace a-team
 ###########
 
 REPO_URL=$(git config --get remote.origin.url)
+# workaround to avoid setting up SSH key in ArgoCD
+REPO_URL=$(echo $REPO_URL | sed 's/git@github.com:/https:\/\/github.com\//') # replace git@github.com: to https://github.com/
 
 yq --inplace ".spec.source.repoURL = \"$REPO_URL\"" argocd/apps.yaml
 
